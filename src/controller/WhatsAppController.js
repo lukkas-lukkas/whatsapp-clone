@@ -141,19 +141,55 @@ class WhatsAppController{
         })
 
         this.el.btnAttachPhoto.on('click', event=>{
-            console.log('photo');
+            this.el.inputPhoto.click();
+        })
+
+        this.el.inputPhoto.on('change', event=>{
+            [...this.el.inputPhoto.files].forEach((file)=>{
+                console.log('file', file);
+            })
         })
 
         this.el.btnAttachCamera.on('click', event=>{
-            console.log('camera');
+            this.closeAllMainPanel();
+            this.el.panelCamera.css({
+                height: '100%'
+            });
+            this.el.panelCamera.addClass('open');
+        })
+
+        this.el.btnClosePanelCamera.on('click', event=>{
+            this.closeAllMainPanel();
+            this.el.panelMessagesContainer.show();
+        })
+
+        this.el.btnTakePicture.on('click', event=>{
+            console.log('takePicture');
         })
 
         this.el.btnAttachDocument.on('click', event=>{
-            console.log('document');
+            this.closeAllMainPanel();
+            this.el.panelDocumentPreview.css({
+                height: '100%'
+            });
+            this.el.panelDocumentPreview.addClass('open');
+        })
+
+        this.el.btnClosePanelDocumentPreview.on('click', event=>{
+            this.closeAllMainPanel();
+            this.el.panelMessagesContainer.show();
+        })
+
+        this.el.btnSendDocument.on('click', event=>{
+            console.log('btnSendDocument');
         })
 
         this.el.btnAttachContact.on('click', event=>{
-            console.log('contact');
+            this.el.modalContacts.show();
+        })
+
+        this.el.btnCloseModalContacts.on('click', event=>{
+            this.el.modalContacts.hide();
         })
     }
 
@@ -165,6 +201,11 @@ class WhatsAppController{
     closeMenuAttach(event){
         this.el.menuAttach.removeClass('open');
         document.removeEventListener('click', this.closeMenuAttach);
-        console.log('remove menu');
+    }
+
+    closeAllMainPanel(){
+        this.el.panelMessagesContainer.hide();  
+        this.el.panelDocumentPreview.removeClass('open');
+        this.el.panelCamera.removeClass('open');
     }
 }
