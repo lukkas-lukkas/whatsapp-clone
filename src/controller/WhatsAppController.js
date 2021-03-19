@@ -177,7 +177,25 @@ export class WhatsAppController{
         })
 
         this.el.btnTakePicture.on('click', event=>{
-            console.log('takePicture');
+            let dataUrl = this._camera.takePicture();
+            this.el.pictureCamera.src = dataUrl;
+            this.el.pictureCamera.show();
+            this.el.videoCamera.hide();
+            this.el.btnReshootPanelCamera.show();
+            this.el.containerTakePicture.hide();
+            this.el.containerSendPicture.show();
+        })
+
+        this.el.btnReshootPanelCamera.on('click', event=>{
+            this.el.pictureCamera.hide();
+            this.el.videoCamera.show();
+            this.el.btnReshootPanelCamera.hide();
+            this.el.containerTakePicture.show();
+            this.el.containerSendPicture.hide();
+        })
+
+        this.el.btnSendPicture.on('click', event=>{
+            console.log(this.el.pictureCamera.src);
         })
 
         this.el.btnAttachDocument.on('click', event=>{
