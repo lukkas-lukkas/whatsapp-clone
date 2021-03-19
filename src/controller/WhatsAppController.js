@@ -1,5 +1,6 @@
 import {Format} from '../Util/Format';
 import {CameraController} from './CameraController';
+import {DocumentPreviewController} from './DocumentPreviewController';
 
 export class WhatsAppController{
     constructor(){
@@ -204,6 +205,37 @@ export class WhatsAppController{
                 height: '100%'
             });
             this.el.panelDocumentPreview.addClass('open');
+            this.el.inputDocument.click();
+        })
+
+        this.el.inputDocument.on('change', event=>{
+            if(this.el.inputDocument.files.length){
+                let file = this.el.inputDocument.files[0];
+
+                this._documentPreviewController = new DocumentPreviewController(file);
+
+                this._documentPreviewController.getPreviewData().then(data=>{
+                    this.el.imgPanelDocumentPreview.src = data.src;
+                    this.el.infoPanelDocumentPreview.innerHTML = data.info;
+                    this.el.imagePanelDocumentPreview.show();
+                    this.el.filePanelDocumentPreview.hide();
+                }).catch(error=>{
+                    switch (file.type) {
+                        case 'application/vnd.ms-excel':
+                        case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                            
+                            break;
+                        case "application/vnd.ms-powerpoint":
+                        case "application/vnd.":
+                            break;
+                            break;
+                        case "application/vnd.ms-powerpoint":
+                            break;
+                        default:
+                            break;
+                    }
+                })
+            }
         })
 
         this.el.btnClosePanelDocumentPreview.on('click', event=>{
