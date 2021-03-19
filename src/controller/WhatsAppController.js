@@ -124,10 +124,47 @@ class WhatsAppController{
 
             let formData = this.el.formPanelAddContact.getForm();
         })
+
+        this.el.contactsMessagesList.querySelectorAll('.contact-item').forEach(item=>{
+            item.on('click', event=>{
+                this.el.main.css({
+                    display: 'flex'
+                })
+                this.el.home.hide();
+            })
+        })
+
+        this.el.btnAttach.on('click', event=>{
+            event.stopPropagation();
+            this.el.menuAttach.addClass('open');
+            document.addEventListener('click', this.closeMenuAttach.bind(this));
+        })
+
+        this.el.btnAttachPhoto.on('click', event=>{
+            console.log('photo');
+        })
+
+        this.el.btnAttachCamera.on('click', event=>{
+            console.log('camera');
+        })
+
+        this.el.btnAttachDocument.on('click', event=>{
+            console.log('document');
+        })
+
+        this.el.btnAttachContact.on('click', event=>{
+            console.log('contact');
+        })
     }
 
     closeAllLeftPanel(){
         this.el.panelEditProfile.hide();
         this.el.panelAddContact.hide();
+    }
+
+    closeMenuAttach(event){
+        this.el.menuAttach.removeClass('open');
+        document.removeEventListener('click', this.closeMenuAttach);
+        console.log('remove menu');
     }
 }
