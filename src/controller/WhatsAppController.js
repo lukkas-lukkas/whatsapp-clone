@@ -191,6 +191,20 @@ class WhatsAppController{
         this.el.btnCloseModalContacts.on('click', event=>{
             this.el.modalContacts.hide();
         })
+
+        this.el.btnSendMicrophone.on('click', event=>{
+            this.el.recordMicrophone.show();
+            this.el.btnSendMicrophone.hide();
+            this.startRecordMicrophoneTime();
+        })
+
+        this.el.btnCancelMicrophone.on('click', event=>{
+            this.closeRecordMicrophone();
+        })
+
+        this.el.btnFinishMicrophone.on('click', event=>{
+            this.closeRecordMicrophone();
+        })
     }
 
     closeAllLeftPanel(){
@@ -208,4 +222,22 @@ class WhatsAppController{
         this.el.panelDocumentPreview.removeClass('open');
         this.el.panelCamera.removeClass('open');
     }
+
+    closeRecordMicrophone(){
+        this.el.recordMicrophone.hide();
+        this.el.btnSendMicrophone.show();
+        clearInterval(this._recordMicrophoneInterval);
+    }
+
+    startRecordMicrophoneTime(){
+
+        let start = Date.now();
+
+        this._recordMicrophoneInterval = setInterval(() => {
+            this.el.recordMicrophoneTimer.innerHTML = Date.now() - start;
+        }, 100);
+
+    }
+
+    
 }
