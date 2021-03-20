@@ -2,12 +2,14 @@ import {Format} from '../Util/Format';
 import {CameraController} from './CameraController';
 import {MicrophoneController} from './MicrophoneController';
 import {DocumentPreviewController} from './DocumentPreviewController';
+import {Firebase} from '../Util/Firebase';
 
 export class WhatsAppController{
     constructor(){
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
+        this._firebase = new Firebase;
     }
 
     elementsPrototype(){
@@ -285,7 +287,6 @@ export class WhatsAppController{
             
             this._microphoneController.on('ready', stream=>{
                 this._microphoneController.startRecorder();
-                console.log('ready event');
             });
 
             this._microphoneController.on('recordTimer', timer=>{
