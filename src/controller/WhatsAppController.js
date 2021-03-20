@@ -210,30 +210,52 @@ export class WhatsAppController{
 
         this.el.inputDocument.on('change', event=>{
             if(this.el.inputDocument.files.length){
+                this.el.panelDocumentPreview.css({
+                    height: '1%'
+                });
+
                 let file = this.el.inputDocument.files[0];
 
                 this._documentPreviewController = new DocumentPreviewController(file);
 
                 this._documentPreviewController.getPreviewData().then(data=>{
+                    
                     this.el.imgPanelDocumentPreview.src = data.src;
                     this.el.infoPanelDocumentPreview.innerHTML = data.info;
                     this.el.imagePanelDocumentPreview.show();
                     this.el.filePanelDocumentPreview.hide();
+                    this.el.panelDocumentPreview.css({
+                        height: '100%'
+                    });
                 }).catch(error=>{
+                    this.el.panelDocumentPreview.css({
+                        height: '100%'
+                    });
                     switch (file.type) {
-                        case 'application/vnd.ms-excel':
+                        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                        case 'application/msword':
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-doc';
+                            break;
+
                         case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                            
+                        case 'application/vnd.ms-excel':
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-xls';
                             break;
-                        case "application/vnd.ms-powerpoint":
-                        case "application/vnd.":
+
+                        case 'application/vnd.ms-powerpoint':
+                        case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-ppt';
                             break;
-                            break;
-                        case "application/vnd.ms-powerpoint":
-                            break;
+
                         default:
-                            break;
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-generic';
                     }
+
+                    this.el.filenamePanelDocumentPreview.innerHTML = file.name;
+                    this.el.imagePanelDocumentPreview.hide();
+                    this.el.filePanelDocumentPreview.show();
+
+
                 })
             }
         })
