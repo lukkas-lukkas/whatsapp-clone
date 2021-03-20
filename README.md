@@ -8,7 +8,7 @@ Projeto desenvolvido em javascript.
 ### Detalhes
 
 Prototype
-
+Arquitetura MVC
 
 ### Recursos Usados
 

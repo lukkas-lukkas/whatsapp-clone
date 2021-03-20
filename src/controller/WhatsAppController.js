@@ -3,6 +3,7 @@ import {CameraController} from './CameraController';
 import {MicrophoneController} from './MicrophoneController';
 import {DocumentPreviewController} from './DocumentPreviewController';
 import {Firebase} from '../Util/Firebase';
+import { User } from '../model/User';
 
 export class WhatsAppController{
     constructor(){
@@ -11,6 +12,10 @@ export class WhatsAppController{
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
+
+        /*this.el.appContent.css({
+            display: 'flex'
+        });*/
     }
 
     elementsPrototype(){
@@ -395,11 +400,21 @@ export class WhatsAppController{
     initAuth(){
         this._firebase.initAuth()
             .then(response=>{
-                this._user = response.user;
-                this._token = response.token;
-                this.el.appContent.css({
-                    display: 'flex'
-                });
+                console.log('user', response.user);
+
+                let userRef = User.findByEmail(response.user.email);
+
+                userRef.set({
+                    name: response.user.displayName,
+                    email: response.user.email,
+                    photo: response.user.photoURL
+                }).then(()=>{
+                    this.el.appContent.css({
+                        display: 'flex'
+                    });
+                }).catch(error=>{
+                    alert('Erro de autenticação');
+                });                
             }).catch(error=>{
                 console.error(error);
             })
