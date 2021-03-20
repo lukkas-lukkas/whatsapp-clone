@@ -6,10 +6,11 @@ import {Firebase} from '../Util/Firebase';
 
 export class WhatsAppController{
     constructor(){
+        this._firebase = new Firebase;
+        this.initAuth();
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
-        this._firebase = new Firebase;
     }
 
     elementsPrototype(){
@@ -391,5 +392,16 @@ export class WhatsAppController{
         this.el.recordMicrophoneTimer.innerHTML = '0:00';
     }
 
-    
+    initAuth(){
+        this._firebase.initAuth()
+            .then(response=>{
+                this._user = response.user;
+                this._token = response.token;
+                this.el.appContent.css({
+                    display: 'flex'
+                });
+            }).catch(error=>{
+                console.error(error);
+            })
+    }
 }
