@@ -9,6 +9,7 @@ Projeto desenvolvido em javascript.
 
 Prototype
 Arquitetura MVC
+Login com gmail incluido carregamento das informações
 
 ### Recursos Usados
 
