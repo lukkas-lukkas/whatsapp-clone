@@ -129,7 +129,11 @@ export class WhatsAppController{
         })
 
         this.el.btnSavePanelEditProfile.on('click', event=>{
-            console.log(this.el.inputNamePanelEditProfile.innerHTML);
+            this.el.btnSavePanelEditProfile.disabled = true;
+            this._user.name = this.el.inputNamePanelEditProfile.innerHTML;
+            this._user.save().then(result=>{
+                this.el.btnSavePanelEditProfile.disabled = false;
+            });
         })
 
         this.el.inputNamePanelEditProfile.on('keypress', event=>{
