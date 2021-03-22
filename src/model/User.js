@@ -36,4 +36,13 @@ export class User extends Model {
     save(){
         return User.findByEmail(this.email).set(this.toJSON());
     }
+
+    addContact(contact){
+        let base64 = btoa(contact.email);
+        return User.getRef()
+            .doc(this.email)
+            .collection('/contacts')
+            .doc(base64)
+            .set(contact.toJSON());
+    }
 }
