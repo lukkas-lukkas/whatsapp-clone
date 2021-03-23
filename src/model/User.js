@@ -39,10 +39,33 @@ export class User extends Model {
 
     addContact(contact){
         let base64 = btoa(contact.email);
-        return User.getRef()
-            .doc(this.email)
-            .collection('/contacts')
+        return User.getContactRef(this.email)
             .doc(base64)
             .set(contact.toJSON());
+    }
+
+    static getContactRef(id){
+        return User.getRef()
+            .doc(id)
+            .collection('contacts');
+    }
+
+    getContact(){
+        return new Promise((resolve, reject)=>{
+            User.getContactRef(this.email).onSnapshot(docs=>{
+                let contacts = [];
+                
+                docs.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
+
+                    contacts.push(data);
+                });
+
+                this.trigger('contactschange', docs);
+
+                resolve(contacts);
+            })
+        })
     }
 }
