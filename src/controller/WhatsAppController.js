@@ -405,6 +405,16 @@ export class WhatsAppController{
                 this.el.inputText.dispatchEvent(new Event('keyup'));
             })
         })
+
+        this.el.inputSearchContacts.on('keyup', event=>{
+            if(this.el.inputSearchContacts.value.length > 0){
+                this.el.inputSearchContactsPlaceholder.hide();
+                this._user.getContacts(this.el.inputSearchContacts.value);
+            } else {
+                this.el.inputSearchContactsPlaceholder.show();
+                this._user.getContacts();
+            }
+        })
     }
 
     closeAllLeftPanel(){
@@ -544,7 +554,7 @@ export class WhatsAppController{
 
         });
 
-        this._user.getContact();
+        this._user.getContacts();
     }
 
     setActiveChat(contact){

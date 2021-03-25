@@ -53,9 +53,9 @@ export class User extends Model {
             .collection('contacts');
     }
 
-    getContact(){
+    getContacts(filter = ''){
         return new Promise((resolve, reject)=>{
-            User.getContactRef(this.email).onSnapshot(docs=>{
+            User.getContactRef(this.email).where('name', '>=', filter).onSnapshot(docs=>{
                 let contacts = [];
                 
                 docs.forEach(doc => {
