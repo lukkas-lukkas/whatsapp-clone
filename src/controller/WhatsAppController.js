@@ -195,7 +195,7 @@ export class WhatsAppController{
 
         this.el.inputPhoto.on('change', event=>{
             [...this.el.inputPhoto.files].forEach((file)=>{
-                console.log('file', file);
+                Message.sendImage(this._contactActive.chatId, this._user.email, file);
             })
         })
 
@@ -563,30 +563,32 @@ export class WhatsAppController{
             Message.getRef(this._contactActive.chatId).onSnapshot(()=>{});
         }
 
-        this._contactActive = contact;
-
         this.el.activeName.innerHTML = contact.name;
         this.el.activeStatus.innerHTML = contact.status;
+
+
         if(contact.photo){
             let img = this.el.activePhoto;
             img.src = contact.photo;
             img.show();
         }
-        this.el.home.hide();
-        this.el.main.css({
-            display: 'flex'
-                    })
+
+        this._contactActive = contact;        
                     
-        this.el.panelMessagesContainer.innerHTML = '';
-
+        
         Message.getRef(this._contactActive.chatId).orderBy('timeStamp').onSnapshot(docs=>{
-
+            
             let scrollTop = this.el.panelMessagesContainer.scrollTop;
-            let scrollTopMax = this.el.panelMessagesContainer.scrollHeight - this.el.panelMessagesContainer.offsetHeight
+            let scrollTopMax = this.el.panelMessagesContainer.scrollHeight - this.el.panelMessagesContainer.offsetHeight;
+
             let autoScroll = scrollTop >= scrollTopMax;
 
+            this.el.panelMessagesContainer.innerHTML = '';
+
             docs.forEach(doc=>{
+
                 let data = doc.data();
+                
                 data.id = doc.id;
                 
                 let message = new Message;
@@ -623,6 +625,11 @@ export class WhatsAppController{
             } else {
                 this.el.panelMessagesContainer.scrollTop = scrollTop;
             }
+        })
+
+        this.el.home.hide();
+        this.el.main.css({
+            display: 'flex'
         })
         
     }

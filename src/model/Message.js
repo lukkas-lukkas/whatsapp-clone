@@ -132,13 +132,8 @@ export class Message extends Model {
                                             </div>
                                         </div>
                                     </div>
-                                    <img src="#" class="_1JVSX message-photo" style="width: 100%; display:none">
+                                    <img src="${this.content}" class="_1JVSX message-photo" style="width: 100%; display:none">
                                     <div class="_1i3Za"></div>
-                                </div>
-                                <div class="message-container-legend">
-                                    <div class="_3zb-j ZhF0n">
-                                        <span dir="ltr" class="selectable-text invisible-space copyable-text message-text">Texto da foto</span>
-                                    </div>
                                 </div>
                                 <div class="_2TvOE">
                                     <div class="_1DZAH text-white" role="button">
@@ -156,7 +151,17 @@ export class Message extends Model {
                             </span>
                         </div>
                     </div> 
-                `;                
+                `;
+
+                div.querySelector('.message-photo').on('load', function(){
+                    this.show();
+                    div.querySelector('._34Olu').hide();
+                    div.querySelector('._3v3PK').css({
+                        height: 'auto'
+                    });
+                }).on('click', function(){
+                    window.open(this.src);
+                });
                 break;
 
             case 'audio':
@@ -227,7 +232,6 @@ export class Message extends Model {
                                 </div>
                             </div>
                         </div>
-
                         <div class="_3S8Q-" role="button">
                             <span data-icon="forward-chat">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" width="25" height="25">
@@ -289,6 +293,29 @@ export class Message extends Model {
                 })
             });
         });
+    }
+
+    static sendImage(chatId, from, file){
+
+        return new Promise((resolve, reject)=>{
+
+            let fileRef = Firebase.hd().ref(from).child(Date.now() + '_' + file.name)
+            let uploadTask = fileRef.put(file);
+
+            uploadTask.on('state_changed', event=>{
+                console.info('upload', event);
+            }, error => {
+                console.error('upload', error);
+            }, ()=>{
+                fileRef.getDownloadURL().then(url=>{
+                    Message.send(chatId, from, 'image', url).then(()=>{
+                        resolve();
+                    }).catch(error=>{
+                        reject(['send',error]);
+                    })
+                });
+            })
+        })        
     }
 
     static getRef(chatId){
