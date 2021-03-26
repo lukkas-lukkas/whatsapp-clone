@@ -16,9 +16,9 @@ export class WhatsAppController{
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
-        this.el.appContent.css({
+        /*this.el.appContent.css({
             display: 'flex'
-        });
+        });*/
     }
 
     elementsPrototype(){
@@ -510,13 +510,17 @@ export class WhatsAppController{
     }
 
     initAuth(){
-        //this._firebase.initAuth()
-            //.then(response=>{
-                //this._user = new User(response.user.email);
+        this._firebase.initAuth()
+            .then(response=>{
+                this._user = new User(response.user.email);
+                /* TESTES
+
                 this._user = new User('lukkasoliveiralima@gmail.com');
                 this._user.name = 'Lucas Lima';
                 this._user.email = 'lukkasoliveiralima@gmail.com';
-                this._user.photo = 'https://lh4.googleusercontent.com/-6_0tWw8akKM/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucmO5-GuRQ5d2PcYGqEWwexyV_A15g/s96-c/photo.jpg'
+                this._user.photo = 'https://lh4.googleusercontent.com/-6_0tWw8akKM/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucmO5-GuRQ5d2PcYGqEWwexyV_A15g/s96-c/photo.jpg';
+
+                */
 
                 this._user.on('datachange', data=>{
                     document.querySelector('title').innerHTML  = `${data.name} | WhatsApp Clone`;
@@ -538,9 +542,9 @@ export class WhatsAppController{
                 })
                 
 
-                /*this._user.name = response.user.displayName;
+                this._user.name = response.user.displayName;
                 this._user.email = response.user.email;
-                this._user.photo = response.user.photoURL*/
+                this._user.photo = response.user.photoURL
 
                 this._user.save()
                     .then(result=>{
@@ -550,9 +554,9 @@ export class WhatsAppController{
                     }).catch(error=>{
                         console.error('save', error);
                     });              
-            //}).catch(error=>{
-                //console.error('initAuth',error);
-            //})
+            }).catch(error=>{
+                console.error('initAuth',error);
+            })
     }
 
     initContacts(){        
@@ -671,6 +675,8 @@ export class WhatsAppController{
 
                 let me = (data.from === this._user.email);
 
+                let view = message.getViewElement(me);
+
                 if(!this.el.panelMessagesContainer.querySelector(`#_${data.id}`)){
 
                     if(!me){
@@ -681,13 +687,10 @@ export class WhatsAppController{
                         })
                     }
                 
-                    let view = message.getViewElement(me);
-
                     this.el.panelMessagesContainer.appendChild(view);
 
                     
                 } else{
-                    let view = message.getViewElement(me);
                     this.el.panelMessagesContainer.querySelector(`#_${data.id}`).innerHTML = view.innerHTML;
                 }
                 
@@ -695,6 +698,32 @@ export class WhatsAppController{
                     let msgEl = this.el.panelMessagesContainer.querySelector(`#_${data.id}`);
 
                     msgEl.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
+                }
+
+                if(message.type === 'contact'){                   
+
+                    view.querySelector('.btn-message-send').on('click', event=>{
+                        Chat.createIfNotExists(this._user.email, message.content.email).then(chat=>{
+
+                            let contact = new User(message.content.email)
+
+                            contact.on('datachange', data=>{
+                                contact.chatId = chat.id;
+                                
+                                this._user.addContact(contact);
+
+                                this._user.chatId = chat.id;
+        
+                                contact.addContact(this._user);
+
+                                this.setActiveChat(contact);
+                            });                            
+    
+                        }).catch(error=>{
+                            console.error('createIfNotExists', error);
+                        });
+                        console.log('Enviar mensagem para', message.content);
+                    })
                 }
                 
             });
