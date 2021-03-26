@@ -1,9 +1,10 @@
+import { Firebase } from '../Util/Firebase';
+import { Format } from '../Util/Format';
 import { Base64 } from '../Util/Base64';
-import {Format} from '../Util/Format';
-import {CameraController} from './CameraController';
-import {MicrophoneController} from './MicrophoneController';
-import {DocumentPreviewController} from './DocumentPreviewController';
-import {Firebase} from '../Util/Firebase';
+import { CameraController } from './CameraController';
+import { MicrophoneController } from './MicrophoneController';
+import { DocumentPreviewController } from './DocumentPreviewController';
+import { ContactController } from './ContactController';
 import { User } from '../model/User';
 import { Chat } from '../model/Chat';
 import { Message } from '../model/Message';
@@ -11,10 +12,13 @@ import { Message } from '../model/Message';
 export class WhatsAppController{
     constructor(){
         this._firebase = new Firebase;
-        this.initAuth();
+        this.initAuth(); 
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
+        this.el.appContent.css({
+            display: 'flex'
+        });
     }
 
     elementsPrototype(){
@@ -368,11 +372,17 @@ export class WhatsAppController{
         })
 
         this.el.btnAttachContact.on('click', event=>{
-            this.el.modalContacts.show();
+            this._contactController = new ContactController(this.el.modalContacts, this._user);
+
+            this._contactController.on('select', contact=>{
+                Message.sendContact(this._contactActive.chatId, this._user.email, contact);
+            });
+
+            this._contactController.open();
         })
 
         this.el.btnCloseModalContacts.on('click', event=>{
-            this.el.modalContacts.hide();
+            this._contactController.close();
         })
 
         this.el.btnSendMicrophone.on('click', event=>{
@@ -500,9 +510,13 @@ export class WhatsAppController{
     }
 
     initAuth(){
-        this._firebase.initAuth()
-            .then(response=>{
-                this._user = new User(response.user.email);
+        //this._firebase.initAuth()
+            //.then(response=>{
+                //this._user = new User(response.user.email);
+                this._user = new User('lukkasoliveiralima@gmail.com');
+                this._user.name = 'Lucas Lima';
+                this._user.email = 'lukkasoliveiralima@gmail.com';
+                this._user.photo = 'https://lh4.googleusercontent.com/-6_0tWw8akKM/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucmO5-GuRQ5d2PcYGqEWwexyV_A15g/s96-c/photo.jpg'
 
                 this._user.on('datachange', data=>{
                     document.querySelector('title').innerHTML  = `${data.name} | WhatsApp Clone`;
@@ -524,9 +538,9 @@ export class WhatsAppController{
                 })
                 
 
-                this._user.name = response.user.displayName;
+                /*this._user.name = response.user.displayName;
                 this._user.email = response.user.email;
-                this._user.photo = response.user.photoURL
+                this._user.photo = response.user.photoURL*/
 
                 this._user.save()
                     .then(result=>{
@@ -536,9 +550,9 @@ export class WhatsAppController{
                     }).catch(error=>{
                         console.error('save', error);
                     });              
-            }).catch(error=>{
-                console.error('initAuth',error);
-            })
+            //}).catch(error=>{
+                //console.error('initAuth',error);
+            //})
     }
 
     initContacts(){        
