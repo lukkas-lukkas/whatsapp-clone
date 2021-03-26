@@ -1,3 +1,4 @@
+import { Base64 } from '../Util/Base64';
 import {Format} from '../Util/Format';
 import {CameraController} from './CameraController';
 import {MicrophoneController} from './MicrophoneController';
@@ -346,7 +347,24 @@ export class WhatsAppController{
         })
 
         this.el.btnSendDocument.on('click', event=>{
-            console.log('btnSendDocument');
+            let file = this.el.inputDocument.files[0];
+            let base64 = this.el.imgPanelDocumentPreview.src;
+
+            if(file.type === 'application/pdf'){
+
+                Base64.toFile(base64).then(filePreview=>{                    
+                    
+                    Message.sendDocument(this._contactActive.chatId, this._user.email, file, filePreview, this.el.infoPanelDocumentPreview.innerHTML);
+    
+                }).catch(error=>{
+                    reject(['Base64.toFile', error]);
+                })
+
+            } else {
+                Message.sendDocument(this._contactActive.chatId, this._user.email, file, false, false);
+            }
+
+            this.el.btnClosePanelDocumentPreview.click();            
         })
 
         this.el.btnAttachContact.on('click', event=>{
@@ -654,7 +672,12 @@ export class WhatsAppController{
                     this.el.panelMessagesContainer.appendChild(view);
 
                     
-                } else if(me) {
+                } else{
+                    let view = message.getViewElement(me);
+                    this.el.panelMessagesContainer.querySelector(`#_${data.id}`).innerHTML = view.innerHTML;
+                }
+                
+                if(this.el.panelMessagesContainer.querySelector(`#_${data.id}`) && me) {
                     let msgEl = this.el.panelMessagesContainer.querySelector(`#_${data.id}`);
 
                     msgEl.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
