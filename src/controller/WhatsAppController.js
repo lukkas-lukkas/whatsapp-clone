@@ -8,17 +8,51 @@ import { ContactController } from './ContactController';
 import { User } from '../model/User';
 import { Chat } from '../model/Chat';
 import { Message } from '../model/Message';
+import { Upload } from '../model/Upload';
 
 export class WhatsAppController{
     constructor(){
+        this._active = true;
         this._firebase = new Firebase;
         this.initAuth(); 
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
-        /*this.el.appContent.css({
-            display: 'flex'
-        });*/
+        this.checkNotifications();
+    }
+
+    checkNotifications(){
+        if(typeof Notification === 'function'){
+            if(Notification.permission !== 'granted'){
+                this.el.alertNotificationPermission.show();
+            } else {
+                this.el.alertNotificationPermission.hide();
+            }
+        }
+
+        this.el.alertNotificationPermission.on('click', event=>{
+            Notification.requestPermission(permission=>{
+                if(permission === 'granted'){
+                    this.el.alertNotificationPermission.hide();
+                }
+            });
+        })
+    }
+
+    notification(data){
+        if(Notification.permission === 'granted' && !this._active){
+            
+            let n = new Notification(this._contactActive.name, {
+                icon: this._contactActive.photo,
+                body: data.content
+            });
+
+            setTimeout(() => {
+               if(n) n.close(); 
+            }, 3000);
+
+
+        }
     }
 
     elementsPrototype(){
@@ -102,6 +136,15 @@ export class WhatsAppController{
     }
 
     initEvents(){
+
+        window.addEventListener('focus', event=>{
+            this._active = true;
+        });
+
+        window.addEventListener('blur', event=>{
+            this._active = false;
+        });
+        
         this.el.myPhoto.on('click', event=>{
             this.closeAllLeftPanel();
             this.el.panelEditProfile.show();
@@ -125,10 +168,6 @@ export class WhatsAppController{
 
         this.el.btnClosePanelAddContact.on('click', event=>{
             this.el.panelAddContact.removeClass('open');
-        })
-
-        this.el.photoContainerEditProfile.on('click', event=>{
-            this.el.inputProfilePhoto.click();
         })
 
         this.el.btnSavePanelEditProfile.on('click', event=>{
@@ -405,7 +444,7 @@ export class WhatsAppController{
         })
 
         this.el.btnFinishMicrophone.on('click', event=>{
-            this._microphoneController.stopRecorder();
+            
             this._microphoneController.on('recorded', (file, metadata)=>{
                 Message.sendAudio(
                     this._contactActive.chatId,
@@ -413,8 +452,10 @@ export class WhatsAppController{
                     file,
                     metadata,
                     this._user.photo
-                );
+                    );
             });
+
+            this._microphoneController.stopRecorder();
             this.closeRecordMicrophone();
         });
 
@@ -522,14 +563,14 @@ export class WhatsAppController{
         this._firebase.initAuth()
             .then(response=>{
                 this._user = new User(response.user.email);
-                /* TESTES
-
+                
+            /* TESTES
                 this._user = new User('lukkasoliveiralima@gmail.com');
                 this._user.name = 'Lucas Lima';
                 this._user.email = 'lukkasoliveiralima@gmail.com';
                 this._user.photo = 'https://lh4.googleusercontent.com/-6_0tWw8akKM/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucmO5-GuRQ5d2PcYGqEWwexyV_A15g/s96-c/photo.jpg';
-
                 */
+
 
                 this._user.on('datachange', data=>{
                     document.querySelector('title').innerHTML  = `${data.name} | WhatsApp Clone`;
@@ -550,7 +591,8 @@ export class WhatsAppController{
                     this.initContacts();
                 })
                 
-
+                /*
+                */
                 this._user.name = response.user.displayName;
                 this._user.email = response.user.email;
                 this._user.photo = response.user.photoURL
@@ -562,10 +604,12 @@ export class WhatsAppController{
                         });
                     }).catch(error=>{
                         console.error('save', error);
-                    });              
+                    });
             }).catch(error=>{
                 console.error('initAuth',error);
             })
+                /*
+                */
     }
 
     initContacts(){        
@@ -598,23 +642,12 @@ export class WhatsAppController{
                             <div class="_25Ooe">
                                 <span dir="auto" title="${contact.name}" class="_1wjpf">${contact.name}</span>
                             </div>
-                            <div class="_3Bxar">
-                                <span class="_3T2VG">${contact.lastMessageTime}</span>
-                            </div>
                         </div>
                         <div class="_1AwDx">
                             <div class="_itDl">
                                 <span title="digitando…" class="vdXUe _1wjpf typing" style="display:none">digitando…</span>
         
                                 <span class="_2_LEW last-message">
-                                    <div class="_1VfKB">
-                                        <span data-icon="status-dblcheck" class="">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18">
-                                                <path fill="#263238" fill-opacity=".4" d="M17.394 5.035l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-.427-.388a.381.381 0 0 0-.578.038l-.451.576a.497.497 0 0 0 .043.645l1.575 1.51a.38.38 0 0 0 .577-.039l7.483-9.602a.436.436 0 0 0-.076-.609zm-4.892 0l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-2.614-2.556a.435.435 0 0 0-.614.007l-.505.516a.435.435 0 0 0 .007.614l3.887 3.8a.38.38 0 0 0 .577-.039l7.483-9.602a.435.435 0 0 0-.075-.609z"></path>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <span dir="ltr" class="_1wjpf _3NFp9">${contact.lastMessage}</span>
                                     <div class="_3Bxar">
                                         <span>
                                             <div class="_15G96">
@@ -651,7 +684,7 @@ export class WhatsAppController{
         }
 
         this.el.activeName.innerHTML = contact.name;
-        this.el.activeStatus.innerHTML = contact.status;
+        this.el.activeStatus.innerHTML = '';
 
 
         if(contact.photo){
@@ -660,8 +693,9 @@ export class WhatsAppController{
             img.show();
         }
 
-        this._contactActive = contact;        
-                    
+        this._contactActive = contact;
+        
+        this._messagesReceived = [];                    
         
         Message.getRef(this._contactActive.chatId).orderBy('timeStamp').onSnapshot(docs=>{
             
@@ -683,6 +717,11 @@ export class WhatsAppController{
                 message.fromJSON(data);
 
                 let me = (data.from === this._user.email);
+
+                if(!me && this._messagesReceived.filter(id=>{return id === data.id}).length === 0){
+                    this.notification(data);
+                    this._messagesReceived.push(data.id)
+                }
 
                 let view = message.getViewElement(me);
 
@@ -731,7 +770,6 @@ export class WhatsAppController{
                         }).catch(error=>{
                             console.error('createIfNotExists', error);
                         });
-                        console.log('Enviar mensagem para', message.content);
                     })
                 }
                 

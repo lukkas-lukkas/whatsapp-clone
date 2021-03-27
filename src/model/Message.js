@@ -1,6 +1,7 @@
 import { Firebase } from '../Util/Firebase';
 import { Format } from '../Util/Format';
 import { Model } from './Model';
+import { Upload } from './Upload';
 
 export class Message extends Model {
     constructor(){
@@ -308,11 +309,11 @@ export class Message extends Model {
                     audioEl.currentTime = 0;
                 };
 
-                btnPlay.on =('click', event =>{
+                btnPlay.on('click', event =>{
                     audioEl.play();
                 });
 
-                btnPause.on =('click', event =>{
+                btnPause.on('click', event =>{
                     audioEl.pause();
                 });
 
@@ -457,7 +458,7 @@ export class Message extends Model {
                     content: urlFile,
                     size: file.size,
                     fileType: file.type,
-                    status: 'sent',
+                    status: 'received',
                     photo,
                     duration: metadata.duration
                 }, {
@@ -521,22 +522,7 @@ export class Message extends Model {
 
     static upload(refFrom, file){
 
-        return new Promise((resolve, reject)=>{
-            let fileRef = Firebase.hd().ref(refFrom).child(Date.now() + '_' + file.name)
-            let uploadTask = fileRef.put(file);
+        return Upload.send(refFrom, file);
 
-            uploadTask.on('state_changed', event=>{
-                console.info('upload', event);
-            }, error => {
-                reject(['upload',error]);
-            }, ()=>{
-                fileRef.getDownloadURL().then(urlFile=>{
-                    resolve(urlFile);
-                }).catch(error=>{
-                    reject(['getDownloadURL',error]);
-                });
-            });
-        })
-        
     }
 }
