@@ -406,8 +406,17 @@ export class WhatsAppController{
 
         this.el.btnFinishMicrophone.on('click', event=>{
             this._microphoneController.stopRecorder();
+            this._microphoneController.on('recorded', (file, metadata)=>{
+                Message.sendAudio(
+                    this._contactActive.chatId,
+                    this._user.email,
+                    file,
+                    metadata,
+                    this._user.photo
+                );
+            });
             this.closeRecordMicrophone();
-        })
+        });
 
         this.el.inputText.on('keypress', event=>{
             if(event.key === 'Enter' && !event.ctrlKey){
