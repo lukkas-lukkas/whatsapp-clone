@@ -4,7 +4,7 @@ Projeto desenvolvido em javascript.
 ###### Acesse em [https://lukkaslima.com/whatsapp-clone](https://lukkaslima.com/whatsapp-clone "WhatsApp clone")
 
 ## Projeto
-![WhatsApp Clone](https://firebasestorage.googleapis.com/v0/b/hcode-com-br.appspot.com/o/whatsapp.jpg?alt=media&token=5fc78e3b-4871-424f-abfa-b765f2515d0c)
+![WhatsApp Clone](https://firebasestorage.googleapis.com/v0/b/whatsapp-clone-c1bca.appspot.com/o/Sem%20t%C3%ADtulo.png?alt=media&token=1817248a-fc87-4c63-976a-5688b8aa8105)
 
 ## Instruções para utilização
 
