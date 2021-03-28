@@ -3,14 +3,14 @@
 Projeto desenvolvido em javascript.
 ###### Acesse em [https://lukkaslima.com/whatsapp-clone](https://lukkaslima.com/whatsapp-clone "WhatsApp clone")
 
-### Projeto
+## Projeto
 ![WhatsApp Clone](https://firebasestorage.googleapis.com/v0/b/hcode-com-br.appspot.com/o/whatsapp.jpg?alt=media&token=5fc78e3b-4871-424f-abfa-b765f2515d0c)
 
-## Detalhes para utilização
+## Instruções para utilização
 
-### Faça 2 logins com diferentes contas do gmail, e adicione em cada conta o outro email logado para um ter o contato do outro
-### Feito isso isso, será possivel a troca de mensagens entre os contatos em tempo real, com envio de textos, audios, documentos e fotos como no whatsapp oficial.
-### Todas as mensagens e arquivos enviados pela aplicação serão apagados sem aviso prévio
+###### >> Faça 2 logins com diferentes contas do gmail, e adicione em cada conta o outro email logado para um ter o contato do outro
+###### >> Feito isso isso, será possivel a troca de mensagens entre os contatos em tempo real, com envio de textos, audios, documentos e fotos como no whatsapp oficial.
+###### >> Todas as mensagens e arquivos enviados pela aplicação serão apagados sem aviso prévio
 
 
 ### Detalhes da aplicação
